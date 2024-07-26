@@ -33,6 +33,11 @@ public class PlayerMovement : MonoBehaviour {
         MovePlayer();
     }
 
+    private void OnTriggerEnter(Collider other) {
+        Destroy(other.gameObject);
+        GameManager.instance.AddScore(1);
+    }
+
     private void MyInput() {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");

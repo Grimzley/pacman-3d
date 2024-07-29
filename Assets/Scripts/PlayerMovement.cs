@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 
-    public float moveSpeed;
+    public float speed;
 
     public float groundDrag;
 
@@ -43,18 +43,18 @@ public class PlayerMovement : MonoBehaviour {
         verticalInput = Input.GetAxisRaw("Vertical");
     }
 
-    private void MovePlayer() {
-        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-
-        rb.AddForce(moveDirection.normalized * moveSpeed, ForceMode.Force);
-    }
-
     private void SpeedControl() {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        if (flatVel.magnitude > moveSpeed) {
-            Vector3 limitVel = flatVel.normalized * moveSpeed;
+        if (flatVel.magnitude > speed) {
+            Vector3 limitVel = flatVel.normalized * speed;
             rb.velocity = new Vector3(limitVel.x, rb.velocity.y, limitVel.z);
         }
+    }
+
+    private void MovePlayer() {
+        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+
+        rb.AddForce(moveDirection.normalized * speed, ForceMode.Force);
     }
 }

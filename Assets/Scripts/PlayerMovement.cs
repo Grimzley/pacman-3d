@@ -37,7 +37,8 @@ public class PlayerMovement : MonoBehaviour {
             GameManager.instance.AddScore(1);
         }else if (other.gameObject.layer == LayerMask.NameToLayer("PowerDot")) {
             other.gameObject.SetActive(false);
-            GameManager.instance.PowerUp();
+            GameManager.instance.AddScore(1);
+            // Manage Power Dot
         }
     }
 

@@ -24,8 +24,4 @@ public class GameManager : MonoBehaviour {
         score += num;
         scoreText.text = score.ToString() + " / 150";
     }
-
-    public void PowerUp() {
-        ghosts.state = GhostManager.GhostStates.FRIGHTENED;
-    }
 }

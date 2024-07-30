@@ -171,12 +171,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6ca4f44d2bd3a64788d229378ed4b0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rayDistance: 5.1
+  rayDistance: 5
   rayLayer:
     serializedVersion: 2
     m_Bits: 8
   speed: 3
   destination: {x: 0, y: 0, z: 0}
+  state: 0
 --- !u!1 &8963253392028955130
 GameObject:
   m_ObjectHideFlags: 0

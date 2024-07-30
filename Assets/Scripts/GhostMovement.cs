@@ -6,54 +6,96 @@ public class GhostMovement : MonoBehaviour {
 
     Rigidbody rb;
     
-    Vector3[] directions = { Vector3.forward, Vector3.right, Vector3.back, Vector3.left };
-    int dirIndex = 0;
+    Vector3[] directions = {Vector3.forward, Vector3.right, Vector3.back, Vector3.left};
+    int dirIndex;
     Vector3 currDir;
+
+    public float rayDistance;
     public LayerMask rayLayer;
 
-    float speed;
-    float rayDistance;
+    public float speed;
 
+    bool checkingNode;
+    public Vector3 destination;
+    
     private void Awake() {
         rb = GetComponent<Rigidbody>();
     }
 
     private void Start() {
-        speed = 1.5f;
-        rayDistance = 5f;
+        checkingNode = false;
+        dirIndex = 0;
         currDir = directions[dirIndex];
     }
 
     private void Update() {
         SpeedControl();
-
-        bool hit = Physics.Raycast(transform.position, currDir, rayDistance, rayLayer);
-        Debug.DrawRay(transform.position, currDir * rayDistance, Color.red);
-        if (hit) {
-            ChangeDirection();
-        }
+        Debug.DrawLine(transform.position, destination);
     }
 
     private void FixedUpdate() {
         MoveGhost();
     }
 
+    private void OnTriggerEnter(Collider other) {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Node")) {
+            if (!checkingNode) {
+                checkingNode = true;
+                ChangeDirection();
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Node")) {
+            checkingNode = false;
+        }
+    }
+
     private void SpeedControl() {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        if (flatVel.magnitude > speed)
-        {
+        if (flatVel.magnitude > speed) {
             Vector3 limitVel = flatVel.normalized * speed;
             rb.velocity = new Vector3(limitVel.x, rb.velocity.y, limitVel.z);
         }
     }
 
     private void ChangeDirection() {
-        if (Random.value < 0.5f) {
-            dirIndex = (dirIndex + 1) % 4;
-        }else {
-            dirIndex = (dirIndex + 3) % 4;
+        rb.velocity = Vector3.zero;
+
+        Vector3 tmp = transform.position;
+        tmp.x = Mathf.Round(tmp.x);
+        tmp.z = Mathf.Round(tmp.z);
+        transform.position = tmp;
+
+        int turnRight = (dirIndex + 1) % 4;
+        int turnLeft = (dirIndex + 3) % 4;
+
+        int minIndex = (dirIndex + 2) % 4;
+        float minDist = float.MaxValue;
+        if (!Physics.Raycast(transform.position, directions[dirIndex], rayDistance, rayLayer)) {
+            float dist = Vector3.Distance(transform.position + currDir * rayDistance, destination);
+            if (dist < minDist) {
+                minDist = dist;
+                minIndex = dirIndex;
+            }
         }
-        currDir = directions[dirIndex];
+        if (!Physics.Raycast(transform.position, directions[turnRight], rayDistance, rayLayer)) {
+            float dist = Vector3.Distance(transform.position + directions[turnRight] * rayDistance, destination);
+            if (dist < minDist) {
+                minDist = dist;
+                minIndex = turnRight;
+            }
+        }
+        if (!Physics.Raycast(transform.position, directions[turnLeft], rayDistance, rayLayer)) {
+            float dist = Vector3.Distance(transform.position + directions[turnLeft] * rayDistance, destination);
+            if (dist < minDist) {
+                minIndex = turnLeft;
+            }
+        }
+
+        dirIndex = minIndex;
+        currDir = directions[minIndex];
         transform.rotation = Quaternion.LookRotation(currDir, Vector3.up);
     }
 

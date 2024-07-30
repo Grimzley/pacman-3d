@@ -1,28 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.UIElements;
 
 public class GhostManager : MonoBehaviour {
 
     public Transform player;
     public Transform spawn;
 
-    public GhostMovement blinky; // -> player
-    public GhostMovement pinky; // -> 2 units in front of player
-    public GhostMovement inky; // -> yes...
-    public GhostMovement clyde; // -> player if far, spawn if close
+    public GhostMovement blinky;
+    public GhostMovement pinky;
+    public GhostMovement inky;
+    public GhostMovement clyde;
 
     private void Start() {
+        blinky.destination = spawn.position;
+        pinky.destination = spawn.position;
+        inky.destination = spawn.position;
+        clyde.destination = spawn.position;
 
+        InvokeRepeating("UpdatePaths", 10f, 0.5f);
     }
+    private void UpdatePaths() {
+        blinky.destination = player.position;
 
-    private void Update() {
-        
-    }
+        pinky.destination = player.position + new Vector3(player.forward.x, 0f, player.forward.z).normalized * 20f;
 
-    private void FixedUpdate() {
-        
+        inky.destination = player.position + (player.position - blinky.transform.position);
+
+        if (Vector3.Distance(clyde.transform.position, player.position) < 40f) {
+            clyde.destination = spawn.position;
+        }else {
+            clyde.destination = player.transform.position;
+        }
     }
 }

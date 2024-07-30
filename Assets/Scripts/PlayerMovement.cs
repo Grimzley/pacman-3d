@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +5,6 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 
     public float speed;
-
     public float groundDrag;
 
     public Transform orientation;
@@ -34,8 +32,10 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void OnTriggerEnter(Collider other) {
-        Destroy(other.gameObject);
-        GameManager.instance.AddScore(1);
+        if (other.gameObject.layer == LayerMask.NameToLayer("Dot")) {
+            other.gameObject.SetActive(false);
+            GameManager.instance.AddScore(1);
+        }
     }
 
     private void MyInput() {

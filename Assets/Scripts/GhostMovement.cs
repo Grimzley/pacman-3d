@@ -60,7 +60,7 @@ public class GhostMovement : MonoBehaviour {
         }
     }
 
-    private void ChangeDirection() {
+    private void ChangeDirection(bool spawn = false) {
         rb.velocity = Vector3.zero;
 
         Vector3 tmp = transform.position;

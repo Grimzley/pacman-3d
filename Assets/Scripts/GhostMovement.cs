@@ -5,7 +5,12 @@ using UnityEngine;
 public class GhostMovement : MonoBehaviour {
 
     Rigidbody rb;
-    
+
+    public Transform spawn;
+    public Transform home;
+
+    public float speed;
+
     Vector3[] directions = {Vector3.forward, Vector3.right, Vector3.back, Vector3.left};
     int dirIndex;
     Vector3 currDir;
@@ -13,27 +18,36 @@ public class GhostMovement : MonoBehaviour {
     public float rayDistance;
     public LayerMask rayLayer;
 
-    public float speed;
-
     bool checkingNode;
     public Vector3 destination;
-    
+
+    Renderer ren;
+    public Material matNormal;
+    public Material matFrighten;
+
+    public float spawnTime;
+    public float frightenTime;
+    float timer;
+
     public enum GhostStates {
         SPAWNING,
         ALIVE,
         FRIGHTENED,
-        DEAD
+        SLEEP
     }
     public GhostStates state;
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
+        ren = rb.GetComponent<Renderer>();
     }
 
     private void Start() {
         checkingNode = false;
         dirIndex = 0;
         currDir = directions[dirIndex];
+        timer = 0f;
+        ren.material = matNormal;
     }
 
     private void Update() {
@@ -43,23 +57,47 @@ public class GhostMovement : MonoBehaviour {
 
         bool hit = Physics.Raycast(transform.position, currDir, rayDistance, rayLayer);
         if (hit) {
-            if (state == GhostStates.SPAWNING) {
-                TurnAround();
-            }else {
-                ChangeDirection();
+            ChangeDirection();
+        }
+
+        if (state == GhostStates.FRIGHTENED) {
+            timer += Time.deltaTime;
+            if (timer > frightenTime) {
+                timer -= frightenTime;
+                FrightenModeExit();
+            }
+        }
+
+        if (state == GhostStates.SPAWNING) {
+            timer += Time.deltaTime;
+            if (timer > frightenTime) {
+                timer -= frightenTime;
+                Spawn();
             }
         }
     }
 
     private void FixedUpdate() {
-        MoveGhost();
+        if (state != GhostStates.SPAWNING) { 
+            MoveGhost();
+        }
     }
 
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.layer == LayerMask.NameToLayer("Node")) {
             if (!checkingNode) {
                 checkingNode = true;
-                ChangeDirection();
+                if (state == GhostStates.FRIGHTENED) {
+                    RandomDirection();
+                }else { 
+                    ChangeDirection();
+                }
+            }
+        }else if (other.gameObject.layer == LayerMask.NameToLayer("Player")) {
+            if (state == GhostStates.FRIGHTENED) {
+                Die();
+            }else {
+                // Game Over
             }
         }
     }
@@ -76,6 +114,30 @@ public class GhostMovement : MonoBehaviour {
             Vector3 limitVel = flatVel.normalized * speed;
             rb.velocity = new Vector3(limitVel.x, rb.velocity.y, limitVel.z);
         }
+    }
+
+    public void FrightenModeEnter() {
+        speed -= 1f;
+        ren.material = matFrighten;
+        state = GhostStates.FRIGHTENED;
+    }
+
+    public void FrightenModeExit() {
+        speed += 1f;
+        ren.material = matNormal;
+        state = GhostStates.ALIVE;
+    }
+
+    private void Die() {
+        transform.position = home.position;
+        FrightenModeExit();
+        timer = 0;
+        state = GhostStates.SPAWNING;
+    }
+
+    public void Spawn() {
+        transform.position = spawn.position;
+        state = GhostStates.ALIVE;
     }
 
     private void SetDirection(int index) {
@@ -121,6 +183,24 @@ public class GhostMovement : MonoBehaviour {
             }
         }
         SetDirection(minIndex);
+    }
+
+    private void RandomDirection() {
+        List<int> dirIndexes = new List<int>();
+
+        int turnRight = (dirIndex + 1) % 4;
+        int turnLeft = (dirIndex + 3) % 4;
+
+        if (!Physics.Raycast(transform.position, directions[dirIndex], rayDistance, rayLayer)) {
+            dirIndexes.Add(dirIndex);
+        }
+        if (!Physics.Raycast(transform.position, directions[turnRight], rayDistance, rayLayer)) { 
+            dirIndexes.Add(turnRight);
+        }
+        if (!Physics.Raycast(transform.position, directions[turnLeft], rayDistance, rayLayer)) {
+            dirIndexes.Add(turnLeft);
+        }
+        SetDirection(dirIndexes[Random.Range(0, dirIndexes.Count)]);
     }
 
     private void MoveGhost() {

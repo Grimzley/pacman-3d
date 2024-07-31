@@ -4,12 +4,22 @@ using UnityEngine;
 
 public class GhostManager : MonoBehaviour {
 
+    public static GhostManager instance;
+
     public Transform player;
+
+    public Transform spawn;
+    public Transform home;
 
     public Transform bottomLeft;
     public Transform bottomRight;
     public Transform topLeft;
     public Transform topRight;
+
+    public Material matBlinky;
+    public Material matPinky;
+    public Material matInky;
+    public Material matClyde;
 
     public GhostMovement blinky;
     public GhostMovement pinky;
@@ -24,23 +34,36 @@ public class GhostManager : MonoBehaviour {
 
     public float chaseTime;
     public float scatterTime;
-    public float frightenTime;
-
     float waitTime;
     float timer;
 
-    bool isChasing;
+    private void Awake() {
+        instance = this;
 
+        blinky.spawn = spawn;
+        pinky.spawn = spawn;
+        inky.spawn = spawn;
+        clyde.spawn = spawn;
+
+        blinky.home = home;
+        pinky.home = home;
+        inky.home = home;
+        clyde.home = home;
+
+        blinky.matNormal = matBlinky;
+        pinky.matNormal = matPinky;
+        inky.matNormal = matInky;
+        clyde.matNormal = matClyde;
+
+        blinky.state = GhostMovement.GhostStates.ALIVE;
+        pinky.state = GhostMovement.GhostStates.SPAWNING;
+        inky.state = GhostMovement.GhostStates.SLEEP;
+        clyde.state = GhostMovement.GhostStates.SLEEP;
+    }
     private void Start() {
         state = GameStates.SCATTER;
         waitTime = scatterTime;
         timer = 0f;
-        isChasing = false;
-
-        blinky.state = GhostMovement.GhostStates.ALIVE;
-        pinky.state = GhostMovement.GhostStates.ALIVE;
-        inky.state = GhostMovement.GhostStates.ALIVE;
-        clyde.state = GhostMovement.GhostStates.ALIVE;
 
         InvokeRepeating("UpdatePaths", 0, 0.5f);
     }
@@ -49,7 +72,7 @@ public class GhostManager : MonoBehaviour {
         timer += Time.deltaTime;
         if (timer > waitTime) {
             timer -= waitTime;
-            if (isChasing) {
+            if (state == GameStates.CHASE) {
                 ScatterMode();
             }else {
                 ChaseMode();
@@ -79,7 +102,6 @@ public class GhostManager : MonoBehaviour {
     private void ScatterMode() {
         state = GameStates.SCATTER;
         waitTime = scatterTime;
-        isChasing = false;
         blinky.TurnAround();
         pinky.TurnAround();
         inky.TurnAround();
@@ -89,6 +111,24 @@ public class GhostManager : MonoBehaviour {
     private void ChaseMode() {
         state = GameStates.CHASE;
         waitTime = chaseTime;
-        isChasing = true;
+    }
+
+    public void FrightenMode() {
+        blinky.FrightenModeEnter();
+        pinky.FrightenModeEnter();
+        inky.FrightenModeEnter();
+        clyde.FrightenModeEnter();
+    }
+
+    public void WakeInky() {
+        inky.Spawn();
+    }
+
+    public void WakePinky() {
+        pinky.Spawn();
+    }
+
+    public void WakeClyde() {
+        clyde.Spawn();
     }
 }

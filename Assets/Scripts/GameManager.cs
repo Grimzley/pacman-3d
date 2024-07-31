@@ -6,7 +6,6 @@ using TMPro;
 public class GameManager : MonoBehaviour {
 
     public static GameManager instance;
-    public static GhostManager ghosts;
 
     public TMP_Text scoreText;
     int score;
@@ -23,5 +22,11 @@ public class GameManager : MonoBehaviour {
     public void AddScore(int num) {
         score += num;
         scoreText.text = score.ToString() + " / 150";
+
+        if (score == 25) {
+            GhostManager.instance.WakeInky();
+        }else if (score == 50) {
+            GhostManager.instance.WakeClyde();
+        }
     }
 }

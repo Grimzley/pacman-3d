@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 
+    Rigidbody rb;
+
     public float speed;
     public float groundDrag;
 
@@ -13,8 +15,6 @@ public class PlayerMovement : MonoBehaviour {
     float verticalInput;
 
     Vector3 moveDirection;
-
-    Rigidbody rb;
 
     private void Start() {
         rb = GetComponent<Rigidbody>();
@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour {
         }else if (other.gameObject.layer == LayerMask.NameToLayer("PowerDot")) {
             other.gameObject.SetActive(false);
             GameManager.instance.AddScore(1);
-            // Manage Power Dot
+            GhostManager.instance.FrightenMode();
         }
     }
 
@@ -49,7 +49,6 @@ public class PlayerMovement : MonoBehaviour {
 
     private void SpeedControl() {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
         if (flatVel.magnitude > speed) {
             Vector3 limitVel = flatVel.normalized * speed;
             rb.velocity = new Vector3(limitVel.x, rb.velocity.y, limitVel.z);
@@ -58,7 +57,6 @@ public class PlayerMovement : MonoBehaviour {
 
     private void MovePlayer() {
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-
         rb.AddForce(moveDirection.normalized * speed, ForceMode.Force);
     }
 }

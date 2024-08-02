@@ -56,16 +56,16 @@ public class GhostManager : MonoBehaviour {
         clyde.matNormal = matClyde;
 
         blinky.state = GhostMovement.GhostStates.ALIVE;
-        pinky.state = GhostMovement.GhostStates.SPAWNING;
-        inky.state = GhostMovement.GhostStates.SLEEP;
-        clyde.state = GhostMovement.GhostStates.SLEEP;
+        pinky.state = GhostMovement.GhostStates.ALIVE;
+        inky.state = GhostMovement.GhostStates.ALIVE;
+        clyde.state = GhostMovement.GhostStates.ALIVE;
     }
     private void Start() {
         state = GameStates.SCATTER;
         waitTime = scatterTime;
         timer = 0f;
 
-        InvokeRepeating("UpdatePaths", 0, 0.5f);
+        InvokeRepeating("UpdatePaths", 0, 1f);
     }
 
     private void Update() {
@@ -118,17 +118,5 @@ public class GhostManager : MonoBehaviour {
         pinky.FrightenModeEnter();
         inky.FrightenModeEnter();
         clyde.FrightenModeEnter();
-    }
-
-    public void WakeInky() {
-        inky.Spawn();
-    }
-
-    public void WakePinky() {
-        pinky.Spawn();
-    }
-
-    public void WakeClyde() {
-        clyde.Spawn();
     }
 }

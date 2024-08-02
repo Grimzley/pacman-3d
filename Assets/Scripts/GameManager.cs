@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour {
     public TMP_Text scoreText;
     int score;
 
+    AudioManager sounds;
+
     private void Awake() {
         instance = this;
     }
@@ -17,16 +19,20 @@ public class GameManager : MonoBehaviour {
     private void Start() {
         score = 0;
         scoreText.text = score.ToString() + " / 150";
+        sounds = FindObjectOfType<AudioManager>();
     }
 
     public void AddScore(int num) {
         score += num;
         scoreText.text = score.ToString() + " / 150";
 
-        if (score == 25) {
-            GhostManager.instance.WakeInky();
+        if (score == 1) {
+            sounds.Play("Background");
         }else if (score == 50) {
-            GhostManager.instance.WakeClyde();
+            sounds.Play("Background2");
+        }else if (score == 100) {
+            sounds.Pause("Background2");
+            sounds.Play("Background3");
         }
     }
 }

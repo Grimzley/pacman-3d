@@ -9,7 +9,8 @@ public class GhostMovement : MonoBehaviour {
     public Transform spawn;
     public Transform home;
 
-    public float speed;
+    public float maxSpeed;
+    float currSpeed;
 
     Vector3[] directions = {Vector3.forward, Vector3.right, Vector3.back, Vector3.left};
     int dirIndex;
@@ -43,6 +44,7 @@ public class GhostMovement : MonoBehaviour {
     }
 
     private void Start() {
+        currSpeed = maxSpeed;
         checkingNode = false;
         dirIndex = 0;
         currDir = directions[dirIndex];
@@ -70,8 +72,8 @@ public class GhostMovement : MonoBehaviour {
 
         if (state == GhostStates.SPAWNING) {
             timer += Time.deltaTime;
-            if (timer > frightenTime) {
-                timer -= frightenTime;
+            if (timer > spawnTime) {
+                timer -= spawnTime;
                 Spawn();
             }
         }
@@ -93,7 +95,7 @@ public class GhostMovement : MonoBehaviour {
                     ChangeDirection();
                 }
             }
-        }else if (other.gameObject.layer == LayerMask.NameToLayer("Player")) {
+        }else if (other.gameObject.layer == LayerMask.NameToLayer("Player") && other.GetType() == typeof(CapsuleCollider)) {
             if (state == GhostStates.FRIGHTENED) {
                 Die();
             }else {
@@ -110,33 +112,38 @@ public class GhostMovement : MonoBehaviour {
 
     private void SpeedControl() {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        if (flatVel.magnitude > speed) {
-            Vector3 limitVel = flatVel.normalized * speed;
+        if (flatVel.magnitude > currSpeed) {
+            Vector3 limitVel = flatVel.normalized * currSpeed;
             rb.velocity = new Vector3(limitVel.x, rb.velocity.y, limitVel.z);
         }
     }
 
     public void FrightenModeEnter() {
-        speed -= 1f;
-        ren.material = matFrighten;
-        state = GhostStates.FRIGHTENED;
+        if (state == GhostStates.ALIVE) {
+            currSpeed = maxSpeed - 1;
+            timer = 0;
+            ren.material = matFrighten;
+            state = GhostStates.FRIGHTENED;
+        }
     }
 
     public void FrightenModeExit() {
-        speed += 1f;
+        currSpeed = maxSpeed;
         ren.material = matNormal;
         state = GhostStates.ALIVE;
     }
 
     private void Die() {
         transform.position = home.position;
-        FrightenModeExit();
+        currSpeed = maxSpeed;
+        ren.material = matNormal;
         timer = 0;
         state = GhostStates.SPAWNING;
     }
 
     public void Spawn() {
         transform.position = spawn.position;
+        ren.material = matNormal;
         state = GhostStates.ALIVE;
     }
 
@@ -204,6 +211,6 @@ public class GhostMovement : MonoBehaviour {
     }
 
     private void MoveGhost() {
-        rb.AddForce(currDir * speed, ForceMode.Impulse);
+        rb.AddForce(currDir * currSpeed, ForceMode.Impulse);
     }
 }

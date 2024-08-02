@@ -16,10 +16,19 @@ public class PlayerMovement : MonoBehaviour {
 
     Vector3 moveDirection;
 
+    AudioManager sounds;
+    bool isWalking;
+    bool isHeartBeating;
+
+    List <Collider> proximityList = new List<Collider>();
+
     private void Start() {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         rb.drag = groundDrag;
+        sounds = FindObjectOfType<AudioManager>();
+        isWalking = false;
+        isHeartBeating = false;
     }
 
     private void Update() {
@@ -40,11 +49,37 @@ public class PlayerMovement : MonoBehaviour {
             GameManager.instance.AddScore(1);
             GhostManager.instance.FrightenMode();
         }
+
+        if (other.gameObject.layer == LayerMask.NameToLayer("Ghost")) {
+            proximityList.Add(other);
+            if (!isHeartBeating) {
+                isHeartBeating = true;
+                sounds.Play("Heartbeat");
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Ghost") && isHeartBeating) {
+            proximityList.Remove(other);
+            if (proximityList.Count == 0) {
+                isHeartBeating = false;
+                sounds.Pause("Heartbeat");
+            }
+        }
     }
 
     private void MyInput() {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
+        if ((horizontalInput != 0 || verticalInput != 0) && !isWalking) {
+            isWalking = true;
+            sounds.Play("Walking");
+        }
+        if (horizontalInput == 0 && verticalInput == 0 && isWalking) {
+            isWalking = false;
+            sounds.Pause("Walking");
+        }
     }
 
     private void SpeedControl() {

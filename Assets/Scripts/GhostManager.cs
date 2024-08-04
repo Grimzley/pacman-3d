@@ -8,7 +8,6 @@ public class GhostManager : MonoBehaviour {
 
     public Transform player;
 
-    public Transform spawn;
     public Transform home;
 
     public Transform bottomLeft;
@@ -40,11 +39,6 @@ public class GhostManager : MonoBehaviour {
     private void Awake() {
         instance = this;
 
-        blinky.spawn = spawn;
-        pinky.spawn = spawn;
-        inky.spawn = spawn;
-        clyde.spawn = spawn;
-
         blinky.home = home;
         pinky.home = home;
         inky.home = home;
@@ -55,10 +49,15 @@ public class GhostManager : MonoBehaviour {
         inky.matNormal = matInky;
         clyde.matNormal = matClyde;
 
+        blinky.spawnSound = "BlinkySpawn";
+        pinky.spawnSound = "PinkySpawn";
+        inky.spawnSound = "InkySpawn";
+        clyde.spawnSound = "ClydeSpawn";
+
         blinky.state = GhostMovement.GhostStates.ALIVE;
-        pinky.state = GhostMovement.GhostStates.ALIVE;
-        inky.state = GhostMovement.GhostStates.ALIVE;
-        clyde.state = GhostMovement.GhostStates.ALIVE;
+        pinky.state = GhostMovement.GhostStates.SPAWNING;
+        inky.state = GhostMovement.GhostStates.SLEEP;
+        clyde.state = GhostMovement.GhostStates.SLEEP;
     }
     private void Start() {
         state = GameStates.SCATTER;
@@ -73,9 +72,16 @@ public class GhostManager : MonoBehaviour {
         if (timer > waitTime) {
             timer -= waitTime;
             if (state == GameStates.CHASE) {
-                ScatterMode();
-            }else {
-                ChaseMode();
+                state = GameStates.SCATTER;
+                waitTime = scatterTime;
+                blinky.TurnAround();
+                pinky.TurnAround();
+                inky.TurnAround();
+                clyde.TurnAround();
+            }
+            else {
+                state = GameStates.CHASE;
+                waitTime = chaseTime;
             }
         }
     }
@@ -99,24 +105,18 @@ public class GhostManager : MonoBehaviour {
         }
     }
 
-    private void ScatterMode() {
-        state = GameStates.SCATTER;
-        waitTime = scatterTime;
-        blinky.TurnAround();
-        pinky.TurnAround();
-        inky.TurnAround();
-        clyde.TurnAround();
-    }
-
-    private void ChaseMode() {
-        state = GameStates.CHASE;
-        waitTime = chaseTime;
-    }
-
     public void FrightenMode() {
         blinky.FrightenModeEnter();
         pinky.FrightenModeEnter();
         inky.FrightenModeEnter();
         clyde.FrightenModeEnter();
+    }
+
+    public void WakeInky() {
+        inky.Spawn();
+    }
+
+    public void WakeClyde() {
+        clyde.Spawn();
     }
 }

@@ -23,12 +23,18 @@ public class GhostMovement : MonoBehaviour {
     public Vector3 destination;
 
     Renderer ren;
+    [HideInInspector]
     public Material matNormal;
+    [HideInInspector]
     public Material matFrighten;
 
     public float spawnTime;
     public float frightenTime;
     float timer;
+
+    AudioManager sounds;
+    [HideInInspector]
+    public string spawnSound;
 
     public enum GhostStates {
         SPAWNING,
@@ -50,6 +56,7 @@ public class GhostMovement : MonoBehaviour {
         currDir = directions[dirIndex];
         timer = 0f;
         ren.material = matNormal;
+        sounds = FindObjectOfType<AudioManager>();
     }
 
     private void Update() {
@@ -68,9 +75,7 @@ public class GhostMovement : MonoBehaviour {
                 timer -= frightenTime;
                 FrightenModeExit();
             }
-        }
-
-        if (state == GhostStates.SPAWNING) {
+        }else if (state == GhostStates.SPAWNING) {
             timer += Time.deltaTime;
             if (timer > spawnTime) {
                 timer -= spawnTime;
@@ -80,7 +85,7 @@ public class GhostMovement : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        if (state != GhostStates.SPAWNING) { 
+        if (state != GhostStates.SPAWNING && state != GhostStates.SLEEP) { 
             MoveGhost();
         }
     }
@@ -119,7 +124,7 @@ public class GhostMovement : MonoBehaviour {
     }
 
     public void FrightenModeEnter() {
-        if (state == GhostStates.ALIVE) {
+        if (state != GhostStates.SPAWNING && state != GhostStates.SLEEP) {
             currSpeed = maxSpeed - 1;
             timer = 0;
             ren.material = matFrighten;
@@ -135,6 +140,7 @@ public class GhostMovement : MonoBehaviour {
 
     private void Die() {
         transform.position = home.position;
+        rb.velocity = Vector3.zero;
         currSpeed = maxSpeed;
         ren.material = matNormal;
         timer = 0;
@@ -142,21 +148,22 @@ public class GhostMovement : MonoBehaviour {
     }
 
     public void Spawn() {
-        transform.position = spawn.position;
-        ren.material = matNormal;
+        sounds.Play(spawnSound);
         state = GhostStates.ALIVE;
     }
 
     private void SetDirection(int index) {
-        rb.velocity = Vector3.zero;
-        Vector3 tmp = transform.position;
-        tmp.x = Mathf.Round(tmp.x);
-        tmp.z = Mathf.Round(tmp.z);
-        transform.position = tmp;
+        if (state != GhostStates.SPAWNING) {
+            rb.velocity = Vector3.zero;
+            Vector3 tmp = transform.position;
+            tmp.x = Mathf.Round(tmp.x);
+            tmp.z = Mathf.Round(tmp.z);
+            transform.position = tmp;
 
-        dirIndex = index;
-        currDir = directions[index];
-        transform.rotation = Quaternion.LookRotation(currDir, Vector3.up);
+            dirIndex = index;
+            currDir = directions[index];
+            transform.rotation = Quaternion.LookRotation(currDir, Vector3.up);
+        }
     }
 
     public void TurnAround() {
@@ -169,7 +176,7 @@ public class GhostMovement : MonoBehaviour {
 
         int minIndex = (dirIndex + 2) % 4;
         float minDist = float.MaxValue;
-        if (!Physics.Raycast(transform.position, directions[dirIndex], rayDistance, rayLayer)) {
+        if (!Physics.Raycast(transform.position, currDir, rayDistance, rayLayer)) {
             float dist = Vector3.Distance(transform.position + currDir * rayDistance, destination);
             if (dist < minDist) {
                 minDist = dist;

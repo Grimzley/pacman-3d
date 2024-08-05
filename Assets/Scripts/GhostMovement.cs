@@ -46,7 +46,7 @@ public class GhostMovement : MonoBehaviour {
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
-        ren = rb.GetComponent<Renderer>();
+        ren = transform.GetChild(0).gameObject.GetComponent<Renderer>();
     }
 
     private void Start() {

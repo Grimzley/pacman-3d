@@ -74,6 +74,10 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void MyInput() {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
+        }
+
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
         if ((horizontalInput != 0 || verticalInput != 0) && !isWalking) {

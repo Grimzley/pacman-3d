@@ -2,13 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
     public static GameManager instance;
 
+    public Transform spawn;
+
     public TMP_Text scoreText;
     int score;
+
+    public RectTransform rect;
+    private float lifeImageWidth;
+    private int maxLives;
+    private int currLives;
 
     AudioManager sounds;
 
@@ -19,6 +27,12 @@ public class GameManager : MonoBehaviour {
     private void Start() {
         score = 0;
         scoreText.text = score.ToString() + " / 150";
+
+        lifeImageWidth = 100f;
+        maxLives = 3;
+        currLives = maxLives;
+        rect.sizeDelta = new Vector2 (lifeImageWidth * currLives, rect.sizeDelta.y);
+
         sounds = FindObjectOfType<AudioManager>();
     }
 
@@ -40,7 +54,12 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void TakeDamage() {
-
+    public void TakeDamage(int num) {
+        currLives -= num;
+        rect.sizeDelta = new Vector2(lifeImageWidth * currLives, rect.sizeDelta.y);
+        PlayerMovement.instance.transform.position = spawn.position;
+        if (currLives <= 0) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 }

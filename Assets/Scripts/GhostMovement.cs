@@ -104,7 +104,7 @@ public class GhostMovement : MonoBehaviour {
             if (state == GhostStates.FRIGHTENED) {
                 Die();
             }else {
-                GameManager.instance.TakeDamage();
+                GameManager.instance.TakeDamage(1);
             }
         }
     }

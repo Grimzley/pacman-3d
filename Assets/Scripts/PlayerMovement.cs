@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 
+    public static PlayerMovement instance;
+
     Rigidbody rb;
 
     public float speed;
@@ -21,6 +23,10 @@ public class PlayerMovement : MonoBehaviour {
     bool isHeartBeating;
 
     List <Collider> proximityList = new List<Collider>();
+
+    private void Awake() {
+        instance = this;
+    }
 
     private void Start() {
         rb = GetComponent<Rigidbody>();

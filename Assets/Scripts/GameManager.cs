@@ -39,4 +39,8 @@ public class GameManager : MonoBehaviour {
             sounds.Play("Background3");
         }
     }
+
+    public void TakeDamage() {
+
+    }
 }

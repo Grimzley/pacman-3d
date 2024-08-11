@@ -48,9 +48,7 @@ public class PlayerMovement : MonoBehaviour {
             other.gameObject.SetActive(false);
             GameManager.instance.AddScore(1);
             GhostManager.instance.FrightenMode();
-        }
-
-        if (other.gameObject.layer == LayerMask.NameToLayer("Ghost")) {
+        }else if (other.gameObject.layer == LayerMask.NameToLayer("Ghost")) {
             proximityList.Add(other);
             if (!isHeartBeating) {
                 isHeartBeating = true;

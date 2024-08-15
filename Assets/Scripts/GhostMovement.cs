@@ -129,7 +129,7 @@ public class GhostMovement : MonoBehaviour {
 
     public void FrightenModeEnter() {
         if (state != GhostStates.SPAWNING && state != GhostStates.SLEEP) {
-            currSpeed = maxSpeed - 1;
+            currSpeed = maxSpeed - 2;
             timer = 0;
             ren.material = matFrighten;
             state = GhostStates.FRIGHTENED;

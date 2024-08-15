@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour {
 
@@ -75,7 +76,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private void MyInput() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
-            Application.Quit();
+            SceneManager.LoadScene("Menu");
         }
 
         horizontalInput = Input.GetAxisRaw("Horizontal");

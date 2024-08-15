@@ -42,9 +42,12 @@ public class GameManager : MonoBehaviour {
 
         if (score == 1) {
             sounds.Play("Background");
+            GhostManager.instance.WakeBlinky();
+        }else if (score == 5) {
+            GhostManager.instance.WakePinky();
         }else if (score == 10) {
             GhostManager.instance.WakeInky();
-        }else if (score == 20) {
+        }else if (score == 15) {
             GhostManager.instance.WakeClyde();
         }else if (score == 50) {
             sounds.Play("Background2");

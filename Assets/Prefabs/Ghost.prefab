@@ -543,8 +543,8 @@ MonoBehaviour:
   destination: {x: 0, y: 0, z: 0}
   matNormal: {fileID: 0}
   matFrighten: {fileID: 2100000, guid: b82526bd37785b94a96aa0877bbf0c48, type: 2}
-  spawnTime: 30
-  frightenTime: 20
+  spawnTime: 20
+  frightenTime: 15
   spawnSound: 
   state: 0
 --- !u!1 &4049442219438413735

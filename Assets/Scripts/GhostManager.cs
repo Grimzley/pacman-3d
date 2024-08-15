@@ -54,8 +54,8 @@ public class GhostManager : MonoBehaviour {
         inky.spawnSound = "InkySpawn";
         clyde.spawnSound = "ClydeSpawn";
 
-        blinky.state = GhostMovement.GhostStates.ALIVE;
-        pinky.state = GhostMovement.GhostStates.SPAWNING;
+        blinky.state = GhostMovement.GhostStates.SLEEP;
+        pinky.state = GhostMovement.GhostStates.SLEEP;
         inky.state = GhostMovement.GhostStates.SLEEP;
         clyde.state = GhostMovement.GhostStates.SLEEP;
     }
@@ -110,6 +110,14 @@ public class GhostManager : MonoBehaviour {
         pinky.FrightenModeEnter();
         inky.FrightenModeEnter();
         clyde.FrightenModeEnter();
+    }
+
+    public void WakeBlinky() {
+        blinky.Spawn();
+    }
+
+    public void WakePinky() {
+        pinky.Spawn();
     }
 
     public void WakeInky() {

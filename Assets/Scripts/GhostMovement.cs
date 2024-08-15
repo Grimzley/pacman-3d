@@ -90,6 +90,10 @@ public class GhostMovement : MonoBehaviour {
         }
     }
 
+    private void LateUpdate() {
+        transform.rotation = Quaternion.LookRotation(currDir, Vector3.up);
+    }
+
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.layer == LayerMask.NameToLayer("Node")) {
             if (!checkingNode) {
@@ -162,7 +166,6 @@ public class GhostMovement : MonoBehaviour {
 
             dirIndex = index;
             currDir = directions[index];
-            transform.rotation = Quaternion.LookRotation(currDir, Vector3.up);
         }
     }
 

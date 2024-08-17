@@ -12,11 +12,14 @@ public class GameManager : MonoBehaviour {
 
     public TMP_Text scoreText;
     int score;
+    int maxScore;
 
     public RectTransform rect;
     private float lifeImageWidth;
     private int maxLives;
     private int currLives;
+
+    public GameObject gameOverScreen;
 
     AudioManager sounds;
 
@@ -25,8 +28,11 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Start() {
+        Time.timeScale = 1;
+
         score = 0;
-        scoreText.text = score.ToString() + " / 150";
+        maxScore = 150;
+        scoreText.text = score.ToString() + " / " + maxScore.ToString();
 
         lifeImageWidth = 100f;
         maxLives = 3;
@@ -38,7 +44,7 @@ public class GameManager : MonoBehaviour {
 
     public void AddScore(int num) {
         score += num;
-        scoreText.text = score.ToString() + " / 150";
+        scoreText.text = score.ToString() + " / " + maxScore.ToString();
 
         if (score == 1) {
             sounds.Play("Background");
@@ -54,6 +60,8 @@ public class GameManager : MonoBehaviour {
         }else if (score == 100) {
             sounds.Pause("Background2");
             sounds.Play("Background3");
+        }else if (score >= maxScore) {
+            SceneManager.LoadScene("Credits");
         }
     }
 
@@ -62,7 +70,9 @@ public class GameManager : MonoBehaviour {
         rect.sizeDelta = new Vector2(lifeImageWidth * currLives, rect.sizeDelta.y);
         PlayerMovement.instance.transform.position = spawn.position;
         if (currLives <= 0) {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            gameOverScreen.SetActive(true);
+            PlayerMovement.instance.gameObject.SetActive(false);
+            Time.timeScale = 0;
         }
     }
 }

@@ -18,13 +18,15 @@ public class PlayerCamera : MonoBehaviour {
     }
 
     private void Update() {
-        float mouseX = Input.GetAxisRaw("Mouse X") * sensX;
-        float mouseY = Input.GetAxisRaw("Mouse Y") * sensX;
+        if (Cursor.visible == false) {
+            float mouseX = Input.GetAxisRaw("Mouse X") * sensX;
+            float mouseY = Input.GetAxisRaw("Mouse Y") * sensX;
 
-        yRotation += mouseX;
-        xRotation -= mouseY;
+            yRotation += mouseX;
+            xRotation -= mouseY;
 
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        }
     }
     private void LateUpdate() {
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);

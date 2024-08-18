@@ -75,8 +75,12 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void MyInput() {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
-            SceneManager.LoadScene("Menu");
+        if (Input.GetKeyDown(KeyCode.Tab)) {
+            if (GameManager.instance.isPaused) {
+                GameManager.instance.Play();
+            }else {
+                GameManager.instance.Pause();
+            }
         }
 
         horizontalInput = Input.GetAxisRaw("Horizontal");

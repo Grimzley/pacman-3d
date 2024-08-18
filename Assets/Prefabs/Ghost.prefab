@@ -535,7 +535,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawn: {fileID: 0}
   home: {fileID: 0}
-  maxSpeed: 3
+  maxSpeed: 5
   rayDistance: 5
   rayLayer:
     serializedVersion: 2
@@ -544,7 +544,7 @@ MonoBehaviour:
   matNormal: {fileID: 0}
   matFrighten: {fileID: 2100000, guid: b82526bd37785b94a96aa0877bbf0c48, type: 2}
   spawnTime: 20
-  frightenTime: 15
+  frightenTime: 20
   spawnSound: 
   state: 0
 --- !u!1 &4049442219438413735

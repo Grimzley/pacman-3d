@@ -6,11 +6,10 @@ Implements Ghost Pathing using Raycasting
 
 ###### Program Keybinds
 
-W = Move Forward
-A = Move Left
-S = Move Back
-D = Move Right
-
+W = Move Forward\
+A = Move Left\
+S = Move Back\
+D = Move Right\
 Use Mouse to look around
 
 ###### Wishlist

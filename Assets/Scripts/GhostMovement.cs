@@ -6,7 +6,7 @@ public class GhostMovement : MonoBehaviour {
 
     Rigidbody rb;
 
-    public Transform spawn;
+    [HideInInspector]
     public Transform home;
 
     public float maxSpeed;
@@ -62,7 +62,7 @@ public class GhostMovement : MonoBehaviour {
     private void Update() {
         SpeedControl();
 
-        Debug.DrawLine(transform.position, destination);
+        //Debug.DrawLine(transform.position, destination);
 
         bool hit = Physics.Raycast(transform.position, currDir, rayDistance, rayLayer);
         if (hit) {

@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager instance;
 
+    public bool isPaused;
+
     public Transform spawn;
 
     public TMP_Text scoreText;
@@ -20,6 +22,7 @@ public class GameManager : MonoBehaviour {
     private int currLives;
 
     public GameObject gameOverScreen;
+    public GameObject pauseScreen;
 
     AudioManager sounds;
 
@@ -28,7 +31,7 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Start() {
-        Time.timeScale = 1;
+        Play();
 
         score = 0;
         maxScore = 150;
@@ -70,9 +73,29 @@ public class GameManager : MonoBehaviour {
         rect.sizeDelta = new Vector2(lifeImageWidth * currLives, rect.sizeDelta.y);
         PlayerMovement.instance.transform.position = spawn.position;
         if (currLives <= 0) {
-            gameOverScreen.SetActive(true);
-            PlayerMovement.instance.gameObject.SetActive(false);
-            Time.timeScale = 0;
+            GameOver();
         }
+    }
+
+    public void Pause() {
+        pauseScreen.SetActive(true);
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+        isPaused = true;
+        Time.timeScale = 0;
+    }
+
+    public void Play() {
+        pauseScreen.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        isPaused = false;
+        Time.timeScale = 1;
+    }
+
+    public void GameOver() {
+        gameOverScreen.SetActive(true);
+        isPaused = true;
+        Time.timeScale = 0;
     }
 }

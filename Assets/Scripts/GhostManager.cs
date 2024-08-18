@@ -92,7 +92,7 @@ public class GhostManager : MonoBehaviour {
             Vector3 front = new Vector3(player.forward.x, 0f, player.forward.z).normalized;
             pinky.destination = player.position + front * 40f;
             inky.destination = player.position + (player.position + front * 2f - blinky.transform.position);
-            if (Vector3.Distance(clyde.transform.position, player.position) < 80f) {
+            if (Vector3.Distance(clyde.transform.position, player.position) < 60f) {
                 clyde.destination = bottomLeft.position;
             }else {
                 clyde.destination = player.transform.position;
